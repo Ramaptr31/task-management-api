@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const taskController = require('../controllers/taskController');
+const validateRequest = require('../validators/validateMiddleware');
+const { createTaskSchema, updateTaskSchema } = require('../validators/taskValidator');
 
 /**
  * @swagger
@@ -83,8 +85,30 @@ const taskController = require('../controllers/taskController');
  *               $ref: '#/components/schemas/Task'
  *       400:
  *         description: Invalid task data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: title
+ *                       message:
+ *                         type: string
+ *                         example: Title is required
  */
-router.post('/', taskController.createTask);
+router.post('/', validateRequest(createTaskSchema), taskController.createTask);
 
 /**
  * @swagger
@@ -200,10 +224,32 @@ router.get('/:id', taskController.getTaskById);
  *               $ref: '#/components/schemas/Task'
  *       400:
  *         description: Invalid task data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Validation error
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: deadline
+ *                       message:
+ *                         type: string
+ *                         example: Deadline must be in the future
  *       404:
  *         description: Task not found
  */
-router.put('/:id', taskController.updateTask);
+router.put('/:id', validateRequest(updateTaskSchema), taskController.updateTask);
 
 /**
  * @swagger
