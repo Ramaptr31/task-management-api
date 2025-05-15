@@ -7,6 +7,9 @@ const swaggerUi = require('swagger-ui-express');
 // Import routes
 const taskRoutes = require('./routes/taskRoutes');
 
+// Import error handling middleware
+const { errorHandler, notFound } = require('./middleware/errorMiddleware');
+
 // Initialize express app
 const app = express();
 
@@ -47,22 +50,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Routes
 app.use('/tasks', taskRoutes);
 
-// 404 Error Handler
-app.use((req, res, next) => {
-  res.status(404).json({
-    status: 'error',
-    message: 'Resource not found'
-  });
-});
+// 404 Error Handler for undefined routes
+app.use(notFound);
 
 // Global Error Handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    status: 'error',
-    message: err.message || 'Internal Server Error'
-  });
-});
+app.use(errorHandler);
 
 // Server
 const PORT = process.env.PORT || 3000;
