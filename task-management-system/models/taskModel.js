@@ -1,5 +1,61 @@
 const mongoose = require('mongoose');
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Task:
+ *       type: object
+ *       required:
+ *         - title
+ *         - category
+ *         - priority
+ *         - deadline
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated ID of the task
+ *           example: 6159b6a8b12d4a35f8b1f9c7
+ *         title:
+ *           type: string
+ *           description: The title of the task
+ *           example: Implement user authentication
+ *         description:
+ *           type: string
+ *           description: A detailed description of the task
+ *           example: Set up JWT authentication with refresh tokens for the app
+ *         category:
+ *           type: string
+ *           enum: [Work, Personal, Study, Health, Other]
+ *           description: The category the task belongs to
+ *           example: Work
+ *         priority:
+ *           type: string
+ *           enum: [Low, Medium, High]
+ *           description: The priority level of the task
+ *           example: High
+ *         deadline:
+ *           type: string
+ *           format: date-time
+ *           description: The deadline for the task (must be a future date)
+ *           example: 2023-12-31T23:59:59.000Z
+ *         completed:
+ *           type: boolean
+ *           description: Whether the task has been completed
+ *           default: false
+ *           example: false
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the task was created
+ *           example: 2023-10-15T10:30:00.000Z
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the task was last updated
+ *           example: 2023-10-20T15:45:00.000Z
+ */
+
 // Define the task schema
 const taskSchema = new mongoose.Schema(
   {

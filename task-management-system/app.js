@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const path = require('path');
 
 // Import routes
 const taskRoutes = require('./routes/taskRoutes');
@@ -31,21 +32,57 @@ const swaggerOptions = {
     openapi: '3.0.0',
     info: {
       title: 'Task Management API',
-      description: 'API for managing tasks with categories, priorities, and deadlines',
+      description: 'RESTful API for managing tasks with categories, priorities, and deadlines',
       version: '1.0.0',
       contact: {
-        name: 'API Support'
+        name: 'API Support',
+        email: 'support@taskmanagement.com'
       },
-      servers: [{
-        url: `http://localhost:${process.env.PORT}`
-      }]
+      license: {
+        name: 'MIT',
+        url: 'https://opensource.org/licenses/MIT'
+      }
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT}`,
+        description: 'Development server'
+      }
+    ],
+    tags: [
+      {
+        name: 'Tasks',
+        description: 'Task management operations'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
     }
   },
-  apis: ['./routes/*.js']
+  apis: [
+    './routes/*.js',
+    './models/*.js'
+  ]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Task Management API Documentation'
+}));
+
+// Serve swagger.json
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerDocs);
+});
 
 // Routes
 app.use('/tasks', taskRoutes);
@@ -60,6 +97,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
 });
 
 module.exports = app; 
